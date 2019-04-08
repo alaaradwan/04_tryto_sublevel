@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/util"
@@ -58,7 +59,7 @@ func main() {
 	d4, _ := Martualtobson(values[4])
 	d5, _ := Martualtobson(values[5])
 	//---------------------------------------------------------------
-	// the ket structure is "id-name"
+	// the key structure is "id-name"
 	//---------------------------------------------------------------
 	err = db.Put([]byte("0-ali"), d, nil)
 	err = db.Put([]byte("1-ola"), d1, nil)
@@ -97,7 +98,7 @@ func main() {
 	fmt.Println("---------------------------------- ")
 	fmt.Println("get all data in database by id :- ")
 	fmt.Println("---------------------------------- ")
-	iter = db.NewIterator(util.BytesPrefix([]byte("0")), nil) // get all key starts by k
+	iter = db.NewIterator(util.BytesPrefix([]byte("0")), nil) // get all key starts by 0 witch is the id
 	for iter.Next() {
 		// Remember that the contents of the returned slice should not be modified, and
 		// only valid until the next call to Next.
@@ -105,6 +106,31 @@ func main() {
 		value := iter.Value()
 		fmt.Println("your key :- " + string(key) + " || your data :- " + string(value))
 
+	}
+	//---------------------------------------------------------------
+	//get the first key
+	//---------------------------------------------------------------
+	fmt.Println("---------------------------------- ")
+	fmt.Println("your fist key :- ")
+	fmt.Println("---------------------------------- ")
+	iter1 := db.NewIterator(nil, nil)
+	for iter1.First() {
+		key := iter1.Key()
+		value := iter1.Value()
+		fmt.Println("your key :- " + string(key) + " || your data :- " + string(value) + " || is first :" + strconv.FormatBool(iter.First()))
+		break
+	}
+	//---------------------------------------------------------------
+	//get the last key
+	//---------------------------------------------------------------
+	fmt.Println("---------------------------------- ")
+	fmt.Println("your last key :- ")
+	fmt.Println("---------------------------------- ")
+	for iter.Last() {
+		key := iter.Key()
+		value := iter.Value()
+		fmt.Println("your key :- " + string(key) + " || your data :- " + string(value) + " || is Last :" + strconv.FormatBool(iter.Last()))
+		break
 	}
 	//---------------------------------------------------------------
 	//update db by key
