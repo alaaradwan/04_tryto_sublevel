@@ -1,5 +1,5 @@
 # 04_tryto_sublevel
-#the ount but is 
+#the output is 
 ---------------------------------- 
 get by key :- 
 ---------------------------------- 
@@ -14,6 +14,11 @@ your key :- 3-mi || your data :- {"Id":"3","Name":"mi","Group":["D","E"]}
 your key :- 4-noha || your data :- {"Id":"4","Name":"noha","Group":["E","F"]}
 your key :- 5-nour || your data :- {"Id":"5","Name":"nour","Group":["F","G"]}
 ---------------------------------- 
+search on database :- try to find the name aya 
+---------------------------------- 
+the result is founded
+your key :- 2-aya || your data :- {"Id":"2","Name":"aya","Group":["C","D"]}
+---------------------------------- 
 get all data in database by id :- 
 ---------------------------------- 
 your key :- 0-ali || your data :- {"Id":"0","Name":"ali","Group":["A","B"]}
@@ -24,16 +29,16 @@ your key :- 0-ali || your data :- {"Id":"0","Name":"ali","Group":["A","B"]} || i
 ---------------------------------- 
 your last key :- 
 ---------------------------------- 
-your key :- 0-ali || your data :- {"Id":"0","Name":"ali","Group":["A","B"]} || is Last :true
+your key :- 5-nour || your data :- {"Id":"5","Name":"nour","Group":["F","G"]} || is Last :true
 ---------------------------------- 
-update by key  :- update <0-ali> key put him in group F and A 
+update by key  :- update <0-ali> key put him in group A , B and C
 ---------------------------------- 
-get by key :- {"Id":"0","Name":"ali","Group":["F","A"]}
+get by key :- {"Id":"0","Name":"ali","Group":["A","B","C"]}
 ---------------------------------- 
 delete by key  :- delete <1-ola> 
 ---------------------------------- 
 deleted >>>
 find 1-ola key ... 
 err.. Not founded
-2019/04/08 17:35:54 leveldb: not found
+2019/04/08 22:22:04 leveldb: not found
 exit status 1

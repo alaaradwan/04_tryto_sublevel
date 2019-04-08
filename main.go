@@ -6,6 +6,7 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/blevesearch/bleve"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/util"
 )
@@ -25,7 +26,6 @@ type Data struct {
 func Martualtobson(Data Data) (value []byte, err error) {
 	value, err = json.Marshal(Data)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	return value, nil
@@ -40,7 +40,6 @@ func main() {
 		fmt.Println("err ...")
 		log.Fatal(err)
 	}
-
 	//---------------------------------------------------------------
 	// insert into db
 	//---------------------------------------------------------------
@@ -92,6 +91,35 @@ func main() {
 
 	}
 	//---------------------------------------------------------------
+	//search on db by data inside the value
+	//---------------------------------------------------------------
+	fmt.Println("---------------------------------- ")
+	fmt.Println("search on database :- try to find the name aya ")
+	fmt.Println("---------------------------------- ")
+	mapping := bleve.NewIndexMapping() // use bleve to seach on db
+	index, err := bleve.New("example.bleve", mapping)
+	if err != nil {
+		index, err = bleve.Open("example.bleve")
+	}
+	iter = db.NewIterator(nil, nil)
+	for iter.Next() {
+
+		key := iter.Key()
+		value := iter.Value()
+		var result Data
+		json.Unmarshal(value, &result)
+		err = index.Index("index", result)
+		query := bleve.NewMatchQuery("aya") // here where to search in the value
+		search := bleve.NewSearchRequest(query)
+		searchResults, _ := index.Search(search)
+		err = index.Delete("index")
+		if searchResults.String() != "No matches" {
+			fmt.Println("the result is founded")
+			fmt.Println("your key :- " + string(key) + " || your data :- " + string(value))
+			break
+		}
+	}
+	//---------------------------------------------------------------
 	//iterate by id (get by id)
 	//---------------------------------------------------------------
 	//iter := db.NewIterator(&util.Range{Start: []byte("key"), Limit: []byte("key4")}, nil) //use this to limit the number of data
@@ -126,6 +154,7 @@ func main() {
 	fmt.Println("---------------------------------- ")
 	fmt.Println("your last key :- ")
 	fmt.Println("---------------------------------- ")
+	iter = db.NewIterator(nil, nil)
 	for iter.Last() {
 		key := iter.Key()
 		value := iter.Value()
@@ -136,9 +165,13 @@ func main() {
 	//update db by key
 	//---------------------------------------------------------------
 	fmt.Println("---------------------------------- ")
-	fmt.Println("update by key  :- update <0-ali> key put him in group F and A ")
+	fmt.Println("update by key  :- update <0-ali> key put him in group A , B and C")
 	fmt.Println("---------------------------------- ")
-	newdata := Data{Id: "0", Name: "ali", Group: []string{"F", "A"}}
+	data, err = db.Get([]byte("0-ali"), nil)
+	var newdata Data
+	json.Unmarshal(data, &newdata)
+	//newdata := Data{Id: "0", Name: "ali", Group: []string{"F", "A", "C"}}
+	newdata.Group = append(newdata.Group, "C")
 	newjsion, _ := Martualtobson(newdata)
 	err = db.Put([]byte("0-ali"), newjsion, nil)
 	//get the updated opject
@@ -174,5 +207,4 @@ func main() {
 	iter.Release()
 	err = iter.Error()
 
-	db.Close()
 }
